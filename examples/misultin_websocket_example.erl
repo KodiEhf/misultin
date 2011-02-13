@@ -85,11 +85,12 @@ handle_http(Req, Port) ->
 handle_websocket(Ws) ->
 	receive
 		{browser, Data} ->
-			Ws:send(["received '", Data, "'"]),
+			Json = jsonerl:decode(Data),
+			io:format("GOT ~p~n", [Json]),
 			handle_websocket(Ws);
 		_Ignore ->
 			handle_websocket(Ws)
 	after 5000 ->
-		Ws:send("pushing!"),
+		Ws:send("~n"),
 		handle_websocket(Ws)
 	end.

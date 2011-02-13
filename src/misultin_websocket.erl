@@ -224,9 +224,9 @@ ws_loop(Socket, Buffer, WsHandleLoopPid, SocketMode, WsAutoExit) ->
 % Buffering and data handling
 handle_data(_, <<0, Rest/binary>>, Socket, WsHandleLoopPid, SocketMode, WsAutoExit) ->
 	handle_data(<<>>, Rest, Socket, WsHandleLoopPid, SocketMode, WsAutoExit);
-handle_data(Buffer, <<255, _/binary>>, Socket, WsHandleLoopPid, SocketMode, WsAutoExit) ->
+handle_data(Buffer, <<255, Rest/binary>>, Socket, WsHandleLoopPid, SocketMode, WsAutoExit) ->
 	WsHandleLoopPid ! {browser, binary_to_list(Buffer)},
-	ws_loop(Socket, <<>>, WsHandleLoopPid, SocketMode, WsAutoExit);
+	handle_data(Buffer, Rest, Socket, WsHandleLoopPid, SocketMode, WsAutoExit);
 handle_data(Buffer, <<B:1/binary, Rest/binary>>, Socket, WsHandleLoopPid, SocketMode, WsAutoExit) ->
 	handle_data(binary:list_to_bin([Buffer, B]), Rest, Socket, WsHandleLoopPid, SocketMode,
 		WsAutoExit);
